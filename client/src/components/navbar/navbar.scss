@@ -1,0 +1,87 @@
+@import "../../style.scss";
+
+.navbar {
+  @include themify($themes) {
+    display: flex;
+    align-items: center;
+    height: 10vh;
+    justify-content: space-between;
+    border-bottom: 1px solid themed("border");
+    padding: 0 15px;
+    background-color: themed("bg");
+    position: sticky;
+    top: 0;
+    left: 0;
+    color: themed("textColor");
+    z-index: 10;
+
+    .icon {
+      cursor: pointer;
+      color: themed("textColor");
+    }
+
+    .left {
+      @include mobile {
+        justify-content: space-between;
+        width: 100%;
+      }
+
+      display: flex;
+      align-items: center;
+      gap: 30px;
+
+      p {
+        @include mobile {
+          font-size: 20px;
+          width: 120px;
+        }
+
+        color: themed("logo");
+        font-weight: bold;
+        font-size: 24px;
+      }
+
+      .search-bar {
+        display: flex;
+        align-items: center;
+        border: 1px solid themed("border");
+        padding: 3px;
+        input {
+          @include mobile {
+            display: none;
+          }
+          width: 500px;
+          outline: none;
+          border: none;
+          background-color: transparent;
+          color: themed("textColor");
+
+          &:focus ~ .search-bar {
+            border-color: darkblue;
+          }
+        }
+      }
+    }
+
+    .right {
+      @include mobile {
+        display: none;
+      }
+      display: flex;
+      align-items: center;
+      gap: 30px;
+      .user {
+        display: flex;
+        align-items: center;
+        font-size: 16px;
+        img {
+          margin-right: 7px;
+          width: 30px;
+          height: 30px;
+          border-radius: 50%;
+          object-fit: cover;
+        }
+      }
+    }
+  }
+}
