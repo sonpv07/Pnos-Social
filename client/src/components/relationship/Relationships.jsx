@@ -9,7 +9,9 @@ import {
 } from "@tanstack/react-query";
 import { makeRequest } from "../../axios";
 import Loading from "../loading/Loading";
-import UserItem from "./UserItem";
+import UserItem from "./UserItem1";
+import UserItem2 from "./UserItem2";
+import UserItem1 from "./UserItem1";
 
 export default function Relationships({
   setIsOpenRelationships,
@@ -34,7 +36,7 @@ export default function Relationships({
   return (
     <div className="relationships">
       <div className="relationships-container">
-        <div className="title">Follower User</div>
+        <div className="title">Following</div>
         <div className="close" onClick={() => setIsOpenRelationships(false)}>
           <i className="fa-solid fa-x"></i>
         </div>
@@ -43,7 +45,7 @@ export default function Relationships({
             <Loading />
           ) : followList === "follower" ? (
             data?.map((user) => (
-              <UserItem
+              <UserItem1
                 data={user}
                 key={user.id}
                 currentProfile={currentProfile}
@@ -52,7 +54,7 @@ export default function Relationships({
             ))
           ) : (
             fData?.map((user) => (
-              <UserItem
+              <UserItem2
                 data={user}
                 key={user.id}
                 currentProfile={currentProfile}

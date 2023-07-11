@@ -47,10 +47,12 @@ export default function EditPost({ post, setIsOpenEdit, setIsOpenOverlay }) {
     },
   });
 
+  console.log(data);
+
   const handleCloseDialog = () => {
-    setIsOpenEdit(false);
     setOpenDialog(false);
     setIsOpenOverlay(false);
+    setIsOpenEdit(false);
   };
 
   const handleChange = (e) => {
@@ -68,16 +70,17 @@ export default function EditPost({ post, setIsOpenEdit, setIsOpenOverlay }) {
     }
   };
 
+  let imgURL = data?.image;
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    let imgURL = "";
-    if (fileEdit) imgURL = await upload();
+    if (fileEdit !== null) imgURL = await upload();
     setData({ ...data, image: imgURL });
     mutation.mutate({ content: data.content, image: imgURL });
     setOpenDialog(true);
   };
 
-  console.log(data);
+  console.log(fileEdit);
 
   return (
     <div className="edit-post">
@@ -125,8 +128,8 @@ export default function EditPost({ post, setIsOpenEdit, setIsOpenOverlay }) {
                 id="fileEdit"
                 style={{ display: "none" }}
                 onChange={(e) => {
-                  setData({ ...data, image: null });
                   setFileEdit(e.target.files[0]);
+                  setData({ ...data, image: fileEdit });
                 }}
               />
               <label htmlFor="fileEdit">

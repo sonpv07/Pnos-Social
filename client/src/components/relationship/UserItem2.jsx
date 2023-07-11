@@ -9,7 +9,7 @@ import {
 import { makeRequest } from "../../axios";
 import { AuthContext } from "../../context/authContext";
 
-export default function UserItem({ data, currentProfile }) {
+export default function UserItem2({ data, currentProfile, fData }) {
   const queryClient = useQueryClient();
 
   const { user } = useContext(AuthContext);
@@ -23,6 +23,20 @@ export default function UserItem({ data, currentProfile }) {
     queryFn: () =>
       makeRequest
         .get("/relationships?followedUserID=" + currentProfile)
+        .then((res) => {
+          return res.data;
+        }),
+  });
+
+  const {
+    isLoading: rIsLoading2,
+    error: rError2,
+    data: rData2,
+  } = useQuery({
+    queryKey: ["checkFollow2"],
+    queryFn: () =>
+      makeRequest
+        .get("/relationships?followedUserID=" + data.followedUserID)
         .then((res) => {
           return res.data;
         }),
@@ -50,29 +64,49 @@ export default function UserItem({ data, currentProfile }) {
     mutationFollow.mutate([rData?.includes(user.id), userID]);
   };
 
-  console.log("rData", rData);
+  const mutationRemoveFollow = useMutation({
+    mutationFn: () => {
+      return makeRequest.delete(
+        "/relationships?currentProfile=" + data.followedUserID
+      );
+    },
+    onSuccess: () => {
+      // Invalidate and refetch
+      queryClient.invalidateQueries();
+    },
+  });
+
+  const handleRemove = () => {
+    mutationRemoveFollow.mutate();
+  };
 
   return (
     <div className="user">
       <div className="left">
         <img src={`/upload/${data.avatar}`} alt="" />
         <p>{`${data.firstName} ${data.lastName}`}</p>
-
-        {rData?.includes(user.id) ? (  // check data iinclude current user
-          <span>You</span>
-        ) : (
-          <span
-            className="follow-btn"
-            onClick={() => {
-              handleFollow(data.followerUserID);
-            }}
-          >
-            Follow
-          </span>
-        )}
+        <span
+          className="follow-btn"
+          onClick={() => {
+            handleFollow(data.followerUserID);
+          }}
+          style={
+            rData2?.includes(user.id)
+              ? { display: "none" }
+              : { display: "block" }
+          }
+        >
+          Follow
+        </span>
       </div>
       <div className="right">
-        <button>Remove</button>
+        <button
+          onClick={() => {
+            handleRemove();
+          }}
+        >
+          Remove
+        </button>
       </div>
     </div>
   );

@@ -6,7 +6,7 @@ export default function RightBar() {
     <div className="rightbar">
       <div className="container">
         <div className="item">
-          <p className="title">Follow Request</p>
+          <p className="title">Follow Suggestion</p>
           <div className="user">
             <div className="userInfo">
               <img

@@ -22,7 +22,7 @@ import Relationships from "../../components/relationship/Relationships";
 export default function Profile() {
   let currentProfile = useParams();
 
-  const queryClient = useQueryClient();
+    const queryClient = useQueryClient();
 
   const [isOpenEditProfile, setIsOpenEditProfile] = useState(false);
 
