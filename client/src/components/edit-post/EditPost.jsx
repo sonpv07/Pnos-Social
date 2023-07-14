@@ -43,7 +43,7 @@ export default function EditPost({ post, setIsOpenEdit, setIsOpenOverlay }) {
     },
     onSuccess: () => {
       // Invalidate and refetch
-      queryClient.invalidateQueries({ queryKey: ["posts"] });
+      queryClient.invalidateQueries();
     },
   });
 
@@ -152,33 +152,6 @@ export default function EditPost({ post, setIsOpenEdit, setIsOpenOverlay }) {
             </div>
           </div>
         </div>
-        <Dialog
-          open={openDialog}
-          onClose={handleCloseDialog}
-          aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description"
-        >
-          <DialogTitle id="alert-dialog-title">{"Congraturation"}</DialogTitle>
-          <DialogContent>
-            <DialogContentText id="alert-dialog-description">
-              <Alert severity="success">
-                <AlertTitle>Edit post successful!</AlertTitle>
-              </Alert>
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button
-              autoFocus
-              onClick={() => {
-                handleCloseDialog();
-                // props.setOpenBackdrop(false);
-                // props.setIsOpen(false);
-              }}
-            >
-              Close
-            </Button>
-          </DialogActions>
-        </Dialog>
       </form>
     </div>
   );

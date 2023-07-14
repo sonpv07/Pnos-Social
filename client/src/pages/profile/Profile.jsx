@@ -22,7 +22,7 @@ import Relationships from "../../components/relationship/Relationships";
 export default function Profile() {
   let currentProfile = useParams();
 
-    const queryClient = useQueryClient();
+  const queryClient = useQueryClient();
 
   const [isOpenEditProfile, setIsOpenEditProfile] = useState(false);
 
@@ -33,7 +33,7 @@ export default function Profile() {
   const [followList, setFollowList] = useState("");
 
   const { isLoading, error, data } = useQuery({
-    queryKey: ["user"],
+    queryKey: ["user", currentProfile.id],
     queryFn: () =>
       makeRequest.get("/users/find/" + currentProfile.id).then((res) => {
         return res.data;
@@ -45,7 +45,7 @@ export default function Profile() {
     error: profilePostError,
     data: profilePostData,
   } = useQuery({
-    queryKey: ["posts"],
+    queryKey: ["profilePosts", currentProfile.id],
     queryFn: () =>
       makeRequest
         .get("/posts/profilePosts?currentProfile=" + currentProfile.id)
@@ -75,7 +75,7 @@ export default function Profile() {
     error: rError,
     data: rData,
   } = useQuery({
-    queryKey: ["relationships"],
+    queryKey: ["relationships", currentProfile.id],
     queryFn: () =>
       makeRequest
         .get("/relationships?followedUserID=" + currentProfile.id)
@@ -89,7 +89,7 @@ export default function Profile() {
     error: fError,
     data: fData,
   } = useQuery({
-    queryKey: ["getFollowing"],
+    queryKey: ["getFollowing", currentProfile.id],
     queryFn: () =>
       makeRequest
         .get("/relationships/findFollowing?followerUserID=" + currentProfile.id)
@@ -102,7 +102,7 @@ export default function Profile() {
     mutationFollow.mutate(rData?.includes(user.id));
   };
 
-  console.log(isOpenEditProfile);
+  console.log(profilePostData);
 
   return (
     <div className="profile">
@@ -171,7 +171,7 @@ export default function Profile() {
                     Edit Profile
                   </button>
                 ) : rData?.includes(user.id) ? (
-                  <button onClick={handleFollow}>Followed</button>
+                  <button onClick={handleFollow}>Unfollow</button>
                 ) : (
                   <button className="chat-btn" onClick={handleFollow}>
                     Following

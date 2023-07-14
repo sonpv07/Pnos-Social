@@ -31,7 +31,6 @@ export const AuthContextProvider = ({ children }) => {
         withCredentials: true,
       }
     );
-    console.log(typeof res.data);
     setUser(res.data);
   };
 
@@ -52,7 +51,6 @@ export const AuthContextProvider = ({ children }) => {
     setUser(null);
     localStorage.removeItem("user");
   };
-
 
   return (
     <AuthContext.Provider

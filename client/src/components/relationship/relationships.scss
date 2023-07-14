@@ -77,13 +77,22 @@
           .right {
             button {
               height: 30px;
-              width: 90px;
+              width: 100px;
               background-color: themed("bgSoft");
               border-radius: 5px;
-              font-size: 14px;
+              font-size: 15px;
               cursor: pointer;
+              font-weight: 500;
+
+              &.follow-btn {
+                background-color: #0095f6;
+
+                &:hover {
+                  background-color: #56b2ef;
+                }
+              }
               &:hover {
-                font-weight: bold;
+                background-color: rgb(212, 207, 207);
               }
             }
           }

@@ -12,6 +12,10 @@ import {
 } from "@tanstack/react-query";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { useParams } from "react-router-dom";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import Select from "@mui/material/Select";
 
 export default function EditProfile({ setIsOpenEditProfile, userProfile }) {
   const { user, setUser } = useContext(AuthContext);
@@ -23,7 +27,9 @@ export default function EditProfile({ setIsOpenEditProfile, userProfile }) {
     email: userProfile.email,
     firstName: userProfile.firstName,
     lastName: userProfile.lastName,
+    gender: userProfile.gender,
   });
+  const [gender, setGender] = React.useState(userProfile.gender);
 
   const upload = async (file) => {
     console.log(file);
@@ -39,7 +45,10 @@ export default function EditProfile({ setIsOpenEditProfile, userProfile }) {
 
   const handleChange = (e) => {
     setTexts((prev) => ({ ...prev, [e.target.name]: [e.target.value] }));
+    setGender(e.target.value);
   };
+
+  console.log(gender);
 
   const queryClient = useQueryClient();
 
@@ -53,22 +62,41 @@ export default function EditProfile({ setIsOpenEditProfile, userProfile }) {
     },
   });
 
+  const mutationActivites = useMutation({
+    mutationFn: (activity) => {
+      return makeRequest.post("/activities", activity);
+    },
+    onSuccess: () => {
+      // Invalidate and refetch
+      queryClient.invalidateQueries();
+    },
+  });
+
   let coverUrl = userProfile.coverPic;
   let profileUrl = userProfile.avatar;
 
   const handleClick = async (e) => {
     e.preventDefault();
 
-    //TODO: find a better way to get image URL
-
     coverUrl = cover ? await upload(cover) : userProfile.coverPic;
     profileUrl = profile ? await upload(profile) : userProfile.avatar;
 
-    mutation.mutate({ ...texts, coverPic: coverUrl, avatar: profileUrl });
+    mutation.mutate({
+      ...texts,
+      gender,
+      coverPic: coverUrl,
+      avatar: profileUrl,
+    });
+    if (profile)
+      mutationActivites.mutate({ activityUserID: user.id, activityTypeID: 1 });
+    if (cover)
+      mutationActivites.mutate({ activityUserID: user.id, activityTypeID: 2 });
     setIsOpenEditProfile(false);
     setCover(null);
     setProfile(null);
   };
+
+  console.log(profile);
 
   return (
     <div className="edit-profile">
@@ -124,6 +152,7 @@ export default function EditProfile({ setIsOpenEditProfile, userProfile }) {
             name="email"
             onChange={handleChange}
           />
+
           <label>Username</label>
           <input
             type="text"
@@ -146,6 +175,23 @@ export default function EditProfile({ setIsOpenEditProfile, userProfile }) {
             name="lastName"
             onChange={handleChange}
           />
+
+          <FormControl
+            sx={{ m: 1, minWidth: 120, margin: "15px 0 0 0" }}
+            size="small"
+          >
+            <InputLabel id="demo-select-small-label">Gender</InputLabel>
+            <Select
+              labelId="demo-select-small-label"
+              id="demo-select-small"
+              value={gender}
+              label="Gender"
+              onChange={handleChange}
+            >
+              <MenuItem value={"Male"}>Male</MenuItem>
+              <MenuItem value={"Female"}>Female</MenuItem>
+            </Select>
+          </FormControl>
 
           <button onClick={handleClick}>Update</button>
         </form>

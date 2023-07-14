@@ -26,7 +26,7 @@ export default function UserItem1({ data, currentProfile, fData }) {
         .then((res) => {
           return res.data;
         }),
-  });
+  }); // nhung dua follow current profile
 
   const {
     isLoading: rIsLoading2,
@@ -36,10 +36,16 @@ export default function UserItem1({ data, currentProfile, fData }) {
     queryKey: ["checkFollow2"],
     queryFn: () =>
       makeRequest
-        .get("/relationships?followedUserID=" + data.followerUserID)
+        .get("/relationships/findFollowing?followerUserID=" + user.id)
         .then((res) => {
           return res.data;
         }),
+  }); //nhung dua minh follow
+
+  let check = undefined;
+
+  rData2?.filter((abc) => {
+    if (abc.followedUserID === data.followerUserID) check = abc.followedUserID;
   });
 
   const mutationFollow = useMutation({
@@ -54,10 +60,10 @@ export default function UserItem1({ data, currentProfile, fData }) {
     },
   });
 
-  const mutationRemoveFollow = useMutation({
-    mutationFn: () => {
+  const mutationRemoveFollower = useMutation({
+    mutationFn: (userID) => {
       return makeRequest.delete(
-        "/relationships?currentProfile=" + data.followerUserID
+        "/relationships/removeFollower?userID=" + userID
       );
     },
     onSuccess: () => {
@@ -66,25 +72,23 @@ export default function UserItem1({ data, currentProfile, fData }) {
     },
   });
 
-  const handleRemove = () => {
-    mutationRemoveFollow.mutate();
+  const handleRemove = (userID) => {
+    mutationRemoveFollower.mutate(userID);
   };
 
   const handleFollow = (userID) => {
-    console.log("click");
-    console.log(userID);
     mutationFollow.mutate(userID);
   };
 
-  console.log("rData2", rData2);
-  console.log(data);
+  console.log(rData2);
+
   return (
     <div className="user">
       <div className="left">
         <img src={`/upload/${data.avatar}`} alt="" />
         <p>{`${data.firstName} ${data.lastName}`}</p>
 
-        {rData?.includes(user.id) ? ( // check data iinclude current user
+        {data.id === user.id ? ( // check data include current user
           <span>You</span>
         ) : (
           <span
@@ -93,7 +97,9 @@ export default function UserItem1({ data, currentProfile, fData }) {
               handleFollow(data.followerUserID);
             }}
             style={
-              rData2?.includes(user.id)
+              user.id != currentProfile
+                ? { display: "none" }
+                : data.followerUserID === check
                 ? { display: "none" }
                 : { display: "block" }
             }
@@ -103,13 +109,32 @@ export default function UserItem1({ data, currentProfile, fData }) {
         )}
       </div>
       <div className="right">
-        <button
-          onClick={() => {
-            handleRemove();
-          }}
-        >
-          Remove
-        </button>
+        {currentProfile != user.id && check !== data.followerUserID ? (
+          <button
+            onClick={() => {
+              handleFollow(user.id);
+            }}
+            className="follow-btn"
+          >
+            Followed
+          </button>
+        ) : currentProfile != user.id && check === data.followerUserID ? (
+          <button
+            onClick={() => {
+              handleRemove(user.id);
+            }}
+          >
+            Unfollow
+          </button>
+        ) : (
+          <button
+            onClick={() => {
+              handleRemove(data.followerUserID);
+            }}
+          >
+            Remove
+          </button>
+        )}
       </div>
     </div>
   );

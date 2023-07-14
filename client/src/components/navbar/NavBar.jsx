@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import "./navbar.scss";
 import { Link, useNavigate } from "react-router-dom";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
@@ -27,12 +27,32 @@ export default function NavBar() {
 
   const { logout, APIData, user } = useContext(AuthContext);
 
+  const [list, setList] = useState();
+
+  const [input, setInput] = useState("");
+
+  // const [filter, setFilter] = useState("");
+
   const { isLoading, error, data } = useQuery({
     queryKey: ["currentUser"],
     queryFn: () =>
       makeRequest.get("/users/find/" + user.id).then((res) => {
         return res.data;
       }),
+  });
+
+  const {
+    isLoading: uLoading,
+    error: uEror,
+    data: uData,
+  } = useQuery({
+    queryKey: ["allUser", input],
+    queryFn: () =>
+      makeRequest
+        .get("/users/search?userName=" + "%" + input + "%")
+        .then((res) => {
+          return res.data;
+        }),
   });
 
   const navigate = useNavigate();
@@ -55,7 +75,7 @@ export default function NavBar() {
           {" "}
           <div className="left">
             <Link to="/home">
-              <p>PnoS Social</p>
+              <p className="title">PnoS Social</p>
             </Link>
             <Link to="/home" style={{ height: "24px", width: "24px" }}>
               <HomeOutlinedIcon className="icon" />
@@ -69,7 +89,30 @@ export default function NavBar() {
             <GridViewOutlinedIcon className="icon" />
             <div className="search-bar">
               <SearchOutlinedIcon className="icon" />
-              <input type="text" placeholder="Search" />
+              <input
+                type="text"
+                placeholder="Search"
+                onChange={(e) => setInput(e.target.value)}
+                value={input}
+              />
+              <div
+                className="filter"
+                style={input !== "" ? { display: "flex" } : { display: "none" }}
+              >
+                {uData?.map((search) => (
+                  <Link
+                    onClick={() => setInput("")}
+                    key={search.id}
+                    style={{ textDecoration: "none", color: "inherit" }}
+                    to={`/profile/${search?.id}`}
+                  >
+                    <div className="user-item">
+                      <img src={`/upload/${search.avatar}`} alt="" />
+                      <p className="name">{search.name}</p>
+                    </div>
+                  </Link>
+                ))}
+              </div>
             </div>
           </div>
           <div className="right">

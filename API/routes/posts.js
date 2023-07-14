@@ -5,12 +5,15 @@ import {
   deletePost,
   getProfilePosts,
   updatePost,
+  getAllPosts,
+  getOnePost,
 } from "../controller/post.js";
 
 const router = express.Router();
-
-router.get("/profilePosts", getProfilePosts);
-router.get("/", getPosts);
+router.get("/onePost", getOnePost); // select specific post by ID
+router.get("/profilePosts", getProfilePosts); // posts of specific user profile
+router.get("/allPost", getAllPosts); // all post id of latest post
+router.get("/", getPosts); // all posts from following users
 router.post("/", addPost);
 router.put("/", updatePost);
 router.delete("/:id", deletePost);

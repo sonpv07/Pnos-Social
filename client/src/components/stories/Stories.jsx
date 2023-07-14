@@ -20,35 +20,10 @@ import {
 } from "@tanstack/react-query";
 import { makeRequest } from "../../axios";
 import Loading from "../loading/Loading";
+import { useNavigate } from "react-router-dom";
 
 export default function Stories() {
-  const stories = [
-    {
-      id: 1,
-      name: "Huy Pham",
-      img: "https://images.pexels.com/photos/13916254/pexels-photo-13916254.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load",
-    },
-    {
-      id: 2,
-      name: "Huy Pham",
-      img: "https://images.pexels.com/photos/13916254/pexels-photo-13916254.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load",
-    },
-    {
-      id: 3,
-      name: "Huy Pham",
-      img: "https://images.pexels.com/photos/13916254/pexels-photo-13916254.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load",
-    },
-    {
-      id: 4,
-      name: "Huy Pham",
-      img: "https://images.pexels.com/photos/13916254/pexels-photo-13916254.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load",
-    },
-    {
-      id: 5,
-      name: "Huy Pham",
-      img: "https://images.pexels.com/photos/13916254/pexels-photo-13916254.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load",
-    },
-  ];
+  const navigate = useNavigate();
 
   const { user } = useContext(AuthContext);
 
@@ -60,12 +35,25 @@ export default function Stories() {
 
   const [isMoveRight, setIsMoveRight] = useState(false);
 
-  const [isOpenCreateStory, setIsOpenCreateStory] = useState(false);
+  const [openCreateStory, setOpenCreateStory] = useState(false);
 
   const { isLoading, error, data } = useQuery({
     queryKey: ["user"],
     queryFn: () =>
       makeRequest.get("/users/find/" + user.id).then((res) => {
+        return res.data;
+      }),
+  });
+
+  const {
+    isLoading: sLoading,
+    error: SError,
+    data: sData,
+  } = useQuery({
+    // get all stories
+    queryKey: ["stories"],
+    queryFn: () =>
+      makeRequest.get("/stories").then((res) => {
         return res.data;
       }),
   });
@@ -82,9 +70,9 @@ export default function Stories() {
     } else {
       setIsMoveRight(false);
     }
-  });
+  }, [storyNumber]);
 
-  let numOfStories = stories.length + 1;
+  let numOfStories = sData?.length + 1;
 
   const handleSlider = (direction) => {
     let distance = listRef.current.getBoundingClientRect().x - 280;
@@ -98,8 +86,6 @@ export default function Stories() {
       listRef.current.style.transform = `translateX( ${-145 + distance}px)`;
     }
   };
-
-  console.log(isOpenCreateStory);
 
   return (
     <div className="stories">
@@ -117,13 +103,13 @@ export default function Stories() {
           <div className="wrapper" ref={listRef}>
             <div
               className="upload-story"
-              onClick={() => setIsOpenCreateStory(!isOpenCreateStory)}
+              onClick={() => setOpenCreateStory(true)}
             >
               <img src={"/upload/" + data.avatar} alt="" />
               <p>{`${data.firstName} ${data.lastName}`}</p>
               <button>+</button>
             </div>
-            {stories.map((story) => (
+            {sData?.map((story) => (
               <StoryItem story={story} key={story.id} />
             ))}
           </div>
@@ -133,9 +119,14 @@ export default function Stories() {
             onClick={() => handleSlider("right")}
           >
             <i className="fa-solid fa-angle-right"></i>
-            {isOpenCreateStory ? <CreateStory /> : ""}
           </div>
         </>
+      )}
+
+      {openCreateStory ? (
+        <CreateStory setOpenCreateStory={setOpenCreateStory} />
+      ) : (
+        ""
       )}
     </div>
   );

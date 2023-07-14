@@ -41,7 +41,19 @@ export default function CreatePost({ user }) {
   };
 
   const [content, setContent] = useState("");
+  const [activity, setActivity] = useState({
+    activityUserID: "",
+    activityTypeID: "",
+  });
   const [file, setFile] = useState(null);
+
+  const { isLoading, error, data } = useQuery({
+    queryKey: ["postsID"],
+    queryFn: () =>
+      makeRequest.get("/posts/allPost").then((res) => {
+        return res.data;
+      }),
+  });
 
   const upload = async () => {
     try {
@@ -56,9 +68,6 @@ export default function CreatePost({ user }) {
 
   const queryClient = useQueryClient();
 
-  // Queries
-  // const query = useQuery({ queryKey: ["addPost"], queryFn: getTodos });
-
   // Mutations
   const mutation = useMutation({
     mutationFn: (newPost) => {
@@ -66,7 +75,17 @@ export default function CreatePost({ user }) {
     },
     onSuccess: () => {
       // Invalidate and refetch
-      queryClient.invalidateQueries({ queryKey: ["posts"] });
+      queryClient.invalidateQueries();
+    },
+  });
+
+  const mutationActivites = useMutation({
+    mutationFn: (activity) => {
+      return makeRequest.post("/activities", activity);
+    },
+    onSuccess: () => {
+      // Invalidate and refetch
+      queryClient.invalidateQueries();
     },
   });
 
@@ -75,10 +94,16 @@ export default function CreatePost({ user }) {
     let imgUrl = "";
     if (file) imgUrl = await upload();
     mutation.mutate({ content, image: imgUrl });
+    mutationActivites.mutate({
+      activityUserID: user.id,
+      activityTypeID: 3,
+      activityPostID: (data[0]?.id + 1),
+    });
     setFile(null);
     setOpenDialog(true);
     setContent("");
   };
+
   return (
     <form
       onSubmit={(e) => {

@@ -1,6 +1,6 @@
 @import "../../style.scss";
 
-.edit-story {
+.create-story {
   @include themify($themes) {
     position: fixed;
     top: 0;
@@ -13,23 +13,96 @@
     justify-content: center;
     z-index: 999;
 
-    .edit-story-container {
-      margin: auto;
-      width: 50%;
+    form {
+      width: 32%;
       height: 90%;
-      background-color: themed("bg");
-      padding: 50px;
-      z-index: 999;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-      -webkit-box-shadow: 0px 0px 15px 1px rgba(0, 0, 0, 0.09);
-      -moz-box-shadow: 0px 0px 15px 1px rgba(0, 0, 0, 0.09);
-      box-shadow: 0px 0px 15px 1px rgba(0, 0, 0, 0.09);
-      position: relative;
-      @include mobile {
+      .create-story-container {
+        margin: auto;
         width: 100%;
         height: 100%;
+        background-color: themed("bg");
+        padding: 20px 30px;
+        z-index: 999;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        position: relative;
+        border-radius: 10px;
+        @include mobile {
+          width: 100%;
+          height: 100%;
+        }
+
+        h2 {
+          text-align: center;
+          margin: 0;
+        }
+
+        .image-container {
+          position: relative;
+          margin: 0 auto;
+          width: 80%;
+          height: 80%;
+
+          img {
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            border: 2px dashed themed("border");
+          }
+
+          .input {
+            text-align: center;
+            width: 100%;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 999;
+            font-size: 24px;
+            font-weight: 500;
+
+            label {
+              cursor: pointer;
+            }
+          }
+        }
+
+        .close {
+          position: absolute;
+          top: 20px;
+          right: 17px;
+          display: flex;
+          border: none;
+          align-items: center;
+          justify-content: center;
+          background-color: red;
+          padding: 10px;
+          width: 30px;
+          height: 30px;
+          cursor: pointer;
+          color: white;
+          border-radius: 50%;
+          font-size: 16px;
+
+          &:hover {
+            background-color: #f0544f;
+          }
+        }
+
+        .submit {
+          width: 80%;
+          margin: 0 auto;
+          border: none;
+          padding: 10px;
+          cursor: pointer;
+          color: white;
+          background-color: #0095f6;
+          border-radius: 10px;
+          font-weight: 500;
+          &:hover {
+            background-color: #56b2ef;
+          }
+        }
       }
     }
   }

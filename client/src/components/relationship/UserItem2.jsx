@@ -36,18 +36,20 @@ export default function UserItem2({ data, currentProfile, fData }) {
     queryKey: ["checkFollow2"],
     queryFn: () =>
       makeRequest
-        .get("/relationships?followedUserID=" + data.followedUserID)
+        .get("/relationships/findFollowing?followerUserID=" + user.id)
         .then((res) => {
           return res.data;
         }),
+  }); //nhung dua minh follow
+
+  let check = undefined;
+
+  rData2?.filter((abc) => {
+    if (abc.followedUserID === data.followedUserID) check = abc.followedUserID;
   });
 
   const mutationFollow = useMutation({
-    mutationFn: ([followed, userID]) => {
-      if (followed)
-        return makeRequest.delete(
-          "/relationships?currentProfile=" + currentProfile
-        );
+    mutationFn: (userID) => {
       return makeRequest.post("/relationships", {
         currentProfile: userID,
       });
@@ -59,9 +61,7 @@ export default function UserItem2({ data, currentProfile, fData }) {
   });
 
   const handleFollow = (userID) => {
-    console.log("click");
-    console.log(userID);
-    mutationFollow.mutate([rData?.includes(user.id), userID]);
+    mutationFollow.mutate(userID);
   };
 
   const mutationRemoveFollow = useMutation({
@@ -80,33 +80,42 @@ export default function UserItem2({ data, currentProfile, fData }) {
     mutationRemoveFollow.mutate();
   };
 
+  console.log(rData2?.map((user) => user.followedUserID));
+  console.log(check);
+
   return (
     <div className="user">
       <div className="left">
         <img src={`/upload/${data.avatar}`} alt="" />
         <p>{`${data.firstName} ${data.lastName}`}</p>
-        <span
-          className="follow-btn"
-          onClick={() => {
-            handleFollow(data.followerUserID);
-          }}
-          style={
-            rData2?.includes(user.id)
-              ? { display: "none" }
-              : { display: "block" }
-          }
-        >
-          Follow
-        </span>
       </div>
       <div className="right">
-        <button
-          onClick={() => {
-            handleRemove();
-          }}
-        >
-          Remove
-        </button>
+        {currentProfile != user.id && check !== data.followedUserID ? (
+          <button
+            onClick={() => {
+              handleFollow(user.id);
+            }}
+            className="follow-btn"
+          >
+            Followed
+          </button>
+        ) : currentProfile != user.id && check === data.followedUserID ? (
+          <button
+            onClick={() => {
+              handleRemove(user.id);
+            }}
+          >
+            Unfollow
+          </button>
+        ) : (
+          <button
+            onClick={() => {
+              handleRemove(data.followerUserID);
+            }}
+          >
+            Unfollow
+          </button>
+        )}
       </div>
     </div>
   );

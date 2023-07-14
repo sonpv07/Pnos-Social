@@ -14,20 +14,9 @@
     top: 10vh;
     flex: 2;
     color: themed("textColor");
+    border-right: 1px solid themed("border");
     z-index: 3;
 
-    &::-webkit-scrollbar {
-      width: 3px;
-      display: none;
-    }
-
-    &::-webkit-scrollbar-thumb {
-      background-color: gold;
-    }
-
-    &::-webkit-scrollbar-track {
-      background-color: black;
-    }
     .container {
       padding: 15px 10px;
 
@@ -55,6 +44,11 @@
             height: 40px;
             border-radius: 50%;
             object-fit: cover;
+          }
+
+          span {
+            font-size: 16px;
+            font-weight: 500;
           }
         }
       }

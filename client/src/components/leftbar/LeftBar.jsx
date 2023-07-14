@@ -35,8 +35,6 @@ export default function LeftBar() {
       }),
   });
 
-  console.log(user.id);
-
   return (
     <div className="leftbar">
       {isLoading ? (

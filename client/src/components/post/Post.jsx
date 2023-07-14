@@ -88,7 +88,7 @@ const Post = ({ post }) => {
     {
       onSuccess: () => {
         // Invalidate and refetch
-        queryClient.invalidateQueries(["posts"]);
+        queryClient.invalidateQueries();
       },
     }
   );
@@ -182,7 +182,7 @@ const Post = ({ post }) => {
             <ShareOutlinedIcon />
           </div>
         </div>
-        {commentOpen && <Comments postID={post.id} />}
+        {commentOpen && <Comments postID={post.id} commentData={commentData} />}
       </div>
 
       {isOpenEdit ? (

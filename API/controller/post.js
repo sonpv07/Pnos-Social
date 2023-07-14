@@ -2,6 +2,24 @@ import { db } from "../connect.js";
 import jwt from "jsonwebtoken";
 import moment from "moment";
 
+export const getOnePost = (req, res) => {
+  const query =
+    "select p.*, CONCAT(u.firstName, ' ' , u.lastname) as name, u.avatar from posts as p" +
+    " LEFT JOIN users as u ON (p.userID = u.id) WHERE p.id = ?";
+  db.query(query, [req.query.ID], (err, data) => {
+    if (err) return res.status(500).json(err);
+    return res.status(200).json(data);
+  });
+};
+
+export const getAllPosts = (req, res) => {
+  const query = "select id from posts ORDER BY id DESC LIMIT 1";
+  db.query(query, (err, data) => {
+    if (err) return res.status(500).json(err);
+    return res.status(200).json(data);
+  });
+};
+
 export const getPosts = (req, res) => {
   const token = req.cookies.accessToken;
 

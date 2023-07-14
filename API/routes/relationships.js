@@ -4,7 +4,10 @@ import {
   addRelationship,
   deleteRelationship,
   getFollower,
-  getFollowing
+  getFollowing,
+  removeFollow,
+  getSuggestList,
+  getCommonFollower,
 } from "../controller/relationship.js";
 
 const router = express.Router();
@@ -12,7 +15,10 @@ const router = express.Router();
 router.get("/", getRelationships);
 router.get("/find/", getFollower);
 router.get("/findFollowing/", getFollowing);
+router.get("/getSuggest/", getSuggestList);
+router.get("/getSuggestCommon/", getCommonFollower);
 router.post("/", addRelationship);
 router.delete("/", deleteRelationship);
+router.delete("/removeFollower", removeFollow);
 
 export default router;

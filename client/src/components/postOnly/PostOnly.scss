@@ -1,0 +1,14 @@
+@import "../../style.scss";
+
+.post-only {
+  @include themify($themes) {
+    min-height: 90vh;
+    background-color: themed("bgSoft");
+    padding: 20px 0;
+
+    .post-only-container {
+      width: 800px;
+      margin: 0 auto;
+    }
+  }
+}
