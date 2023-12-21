@@ -32,7 +32,7 @@ import { makeRequest } from "../../axios.js";
 export default function CreatePost({ user }) {
   // const [checkUpdate, forceUpdate] = useReducer((x) => x + 1, 0);
 
-  const [disable, setDisable] = useState(false);
+  // const [disable, setDisable] = useState(false);
 
   const [openDialog, setOpenDialog] = useState(false);
 
@@ -41,11 +41,16 @@ export default function CreatePost({ user }) {
   };
 
   const [content, setContent] = useState("");
-  const [activity, setActivity] = useState({
-    activityUserID: "",
-    activityTypeID: "",
-  });
+
   const [file, setFile] = useState(null);
+
+  const { data: userData } = useQuery({
+    queryKey: ["currentUser"],
+    queryFn: () =>
+      makeRequest.get("/users/find/" + user.id).then((res) => {
+        return res.data;
+      }),
+  });
 
   const { isLoading, error, data } = useQuery({
     queryKey: ["postsID"],
@@ -55,11 +60,13 @@ export default function CreatePost({ user }) {
       }),
   });
 
-  const upload = async () => {
+  const uploadMultiple = async () => {
     try {
       const formData = new FormData();
-      formData.append("file", file);
-      const res = await makeRequest.post("/upload", formData);
+      for (const single_file of file) {
+        formData.append("files", single_file);
+      }
+      const res = await makeRequest.post("/uploadMultiple", formData);
       return res.data;
     } catch (err) {
       console.log(err);
@@ -92,12 +99,12 @@ export default function CreatePost({ user }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     let imgUrl = "";
-    if (file) imgUrl = await upload();
-    mutation.mutate({ content, image: imgUrl });
+    if (file) imgUrl = await uploadMultiple();
+    mutation.mutate({ content, image: imgUrl, postTypeID: 1 });
     mutationActivites.mutate({
       activityUserID: user.id,
       activityTypeID: 3,
-      activityPostID: (data[0]?.id + 1),
+      activityPostID: data[0]?.id + 1,
     });
     setFile(null);
     setOpenDialog(true);
@@ -115,7 +122,11 @@ export default function CreatePost({ user }) {
           <div className="container">
             <div className="top">
               <Link to={`/profile/${user?.id}`}>
-                <img src={`/upload/${user.avatar}`} alt="" className="avatar" />
+                <img
+                  src={`/upload/${userData?.avatar}`}
+                  alt=""
+                  className="avatar"
+                />
               </Link>
               <div className="input-place">
                 <textarea
@@ -138,7 +149,8 @@ export default function CreatePost({ user }) {
                   type="file"
                   id="file"
                   style={{ display: "none" }}
-                  onChange={(e) => setFile(e.target.files[0])}
+                  onChange={(e) => setFile(e.target.files)}
+                  multiple="multiple"
                 />
                 <label htmlFor="file">
                   <div className="item">
@@ -162,8 +174,51 @@ export default function CreatePost({ user }) {
 
             {file ? (
               <div className="bottom-2">
-                <hr />
-                <img src={URL.createObjectURL(file)} alt="" />
+                {file.length > 4 ? (
+                  <div className="img-container">
+                    {Array.from(file)
+                      .splice(0, 3)
+                      .map((item, index) => (
+                        <img
+                          src={URL.createObjectURL(item)}
+                          alt=""
+                          key={index}
+                        />
+                      ))}{" "}
+                    <div className="img-4" num-img={`+ ${file.length - 4}`}>
+                      <img src={URL.createObjectURL(file[4])} alt="" />{" "}
+                    </div>
+                  </div>
+                ) : file.length === 1 ? (
+                  <div
+                    className="img-container"
+                    style={{ gridTemplateColumns: "repeat(1, 1fr)" }}
+                  >
+                    {Array.from(file).map((item, index) => (
+                      <img
+                        src={URL.createObjectURL(item)}
+                        alt=""
+                        key={index}
+                        style={{ height: "100%" }}
+                      />
+                    ))}
+                  </div>
+                ) : file.length === 4 ? (
+                  <div className="img-container">
+                    {Array.from(file).map((item, index) => (
+                      <img src={URL.createObjectURL(item)} alt="" key={index} />
+                    ))}
+                  </div>
+                ) : file.length !== 1 && file.length !== 4 ? (
+                  <div className="img-container">
+                    {Array.from(file).map((item, index) => (
+                      <img src={URL.createObjectURL(item)} alt="" key={index} />
+                    ))}
+                  </div>
+                ) : (
+                  ""
+                )}
+
                 <div id="close" onClick={() => setFile(null)}>
                   <i className="fa-solid fa-x"></i>
                 </div>

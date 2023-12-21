@@ -52,6 +52,25 @@ export const AuthContextProvider = ({ children }) => {
     localStorage.removeItem("user");
   };
 
+  // useEffect(() => {
+  //   const handleBeforeUnload = (event) => {
+  //     // Check if the page is being reloaded
+  //     const isReloading = event.clientY < 0; // Negative clientY indicates a reload
+
+  //     if (!isReloading) {
+  //       // Clear the localStorage if the tab is being closed
+  //       localStorage.removeItem("user");
+  //     }
+  //   };
+
+  //   window.addEventListener("beforeunload", handleBeforeUnload);
+
+  //   return () => {
+  //     // Remove the event listener when the component unmounts
+  //     window.removeEventListener("beforeunload", handleBeforeUnload);
+  //   };
+  // }, []);
+
   return (
     <AuthContext.Provider
       value={{

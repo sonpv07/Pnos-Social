@@ -29,9 +29,11 @@ export default function PostOnly() {
   return (
     <div className="post-only">
       <div className="post-only-container">
-        {data?.map((post) => (
-          <Post post={post} key={data.id} />
-        ))}
+        {data?.length > 0 ? (
+          data?.map((post) => <Post post={post} key={post.id} />)
+        ) : (
+          <h2>This post is no longer exist</h2>
+        )}
       </div>
     </div>
   );

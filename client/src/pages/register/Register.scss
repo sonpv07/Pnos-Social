@@ -1,9 +1,11 @@
+@import "../../style.scss";
+
 .register {
   background-color: azure;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  min-height: 100vh;
   background-image: url("https://colorlib.com/etc/lf/Login_v4/images/bg-01.jpg");
   background-size: cover;
 
@@ -15,6 +17,10 @@
     min-height: 95vh;
     flex-direction: column;
     gap: 5px;
+
+    @include mobile {
+      width: 90%;
+    }
 
     h1 {
       text-align: center;
@@ -119,9 +125,13 @@
 
           .social-media {
             display: flex;
-            width: 48%;
+            width: 70%;
             margin: 0 auto;
             justify-content: space-between;
+
+            @include mobile {
+              margin-bottom: 10px;
+            }
             .facebook {
               font-size: 22px;
               background-color: #3b5998;

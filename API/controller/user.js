@@ -22,7 +22,7 @@ export const searchUser = (req, res) => {
     if (err) return res.status(403).json("Token is not valid");
 
     const query =
-      "SELECT CONCAT(firstName, ' ' , lastname) as name, avatar, id FROM users where (firstName like ? OR lastName like ?)" +
+      "SELECT CONCAT(firstName, ' ' , lastName) as name, avatar, id FROM users where (firstName like ? OR lastName like ?)" +
       " and id != ?";
 
     db.query(

@@ -1,0 +1,86 @@
+@import "../style.scss";
+
+.notification {
+  @include themify($themes) {
+    .title {
+      margin-top: 10px;
+      border-bottom: 1px solid themed(border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      h2 {
+        margin: 0;
+      }
+
+      p {
+        color: #0095f6;
+
+        &:hover {
+          color: #56b2ef;
+        }
+      }
+    }
+
+    .notification-container {
+      .item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 5px 8px;
+        cursor: pointer;
+        &:hover {
+          background-color: themed(bgSoft);
+          border-radius: 10px;
+        }
+
+        .infor {
+          display: flex;
+          gap: 12px;
+          align-items: center;
+          img {
+            @include avatar;
+            width: 45px;
+            height: 45px;
+          }
+
+          .text {
+            p {
+              margin: 0;
+
+              &.name {
+                font-weight: 500;
+                font-size: 16px;
+              }
+
+              &.message {
+                color: themed(textColorSoft);
+                font-size: 14px;
+              }
+            }
+          }
+        }
+
+        .time {
+          display: flex;
+          align-items: center;
+          gap: 15px;
+          .time-text {
+            font-size: 13px;
+            color: themed(textColorSoft);
+          }
+
+          .message-notification {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: themed(button);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+          }
+        }
+      }
+    }
+  }
+}

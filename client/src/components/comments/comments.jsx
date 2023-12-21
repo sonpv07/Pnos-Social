@@ -68,9 +68,13 @@ export default function Comments({ postID, commentData }) {
           <button onClick={handleSubmit}>Comment</button>
         </div>
         <div className="user-comment-container">
-          {commentData?.map((comment) => (
-            <CommentItem comment={comment} uData={uData} />
-          ))}
+          {commentData.length > 0 ? (
+            commentData?.map((comment) => (
+              <CommentItem comment={comment} uData={uData} key={comment.id} />
+            ))
+          ) : (
+            <p className="nothing">No comments yet</p>
+          )}
         </div>
       </div>
     </div>

@@ -8,11 +8,13 @@ import {
   removeFollow,
   getSuggestList,
   getCommonFollower,
+  getFriendList,
 } from "../controller/relationship.js";
 
 const router = express.Router();
 
 router.get("/", getRelationships);
+router.get("/friendList", getFriendList);
 router.get("/find/", getFollower);
 router.get("/findFollowing/", getFollowing);
 router.get("/getSuggest/", getSuggestList);

@@ -6,6 +6,8 @@ $themes: (
     bgSoft: #f6f3f3,
     textColorSoft: #555,
     border: lightgray,
+    button: #0095f6,
+    button-hover: #56b2ef,
   ),
   dark: (
     textColor: whitesmoke,
@@ -14,6 +16,8 @@ $themes: (
     bgSoft: #333,
     textColorSoft: lightgray,
     border: #444,
+    button: #0095f6,
+    button-hover: #56b2ef,
   ),
 );
 
@@ -56,4 +60,12 @@ $themes: (
   border-radius: 50%;
   object-fit: cover;
   aspect-ratio: 1/1;
+}
+
+@mixin nothingYet {
+  font-size: 20px;
+  color: themed(textColor);
+  text-align: center;
+  font-weight: 500;
+  margin-top: 0;
 }

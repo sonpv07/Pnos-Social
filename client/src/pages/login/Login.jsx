@@ -35,8 +35,6 @@ export default function Login() {
     }
   };
 
-  console.log(input);
-
   const { googleSignIn, user } = UserAuth();
 
   const handleGoogleSignIn = async () => {

@@ -12,6 +12,7 @@ import Loading from "../loading/Loading";
 import UserItem from "./UserItem1";
 import UserItem2 from "./UserItem2";
 import UserItem1 from "./UserItem1";
+import UserItem3 from "./UserItem3";
 
 export default function Relationships({
   setIsOpenRelationships,
@@ -19,6 +20,7 @@ export default function Relationships({
   fData,
   followList,
   handleFollow,
+  likes,
 }) {
   const { isLoading, error, data } = useQuery({
     queryKey: ["getFollowers"],
@@ -30,13 +32,16 @@ export default function Relationships({
         }),
   });
 
-  console.log(currentProfile);
-  console.log(isLoading);
-
   return (
     <div className="relationships">
       <div className="relationships-container">
-        <div className="title">Following</div>
+        <div className="title">
+          {followList === "follower"
+            ? "Follower List"
+            : followList === "likes"
+            ? "Likes"
+            : "Following List"}
+        </div>
         <div className="close" onClick={() => setIsOpenRelationships(false)}>
           <i className="fa-solid fa-x"></i>
         </div>
@@ -50,6 +55,17 @@ export default function Relationships({
                 key={user.id}
                 currentProfile={currentProfile}
                 handleFollow={handleFollow}
+                setIsOpenRelationships={setIsOpenRelationships}
+              />
+            ))
+          ) : followList === "likes" ? (
+            likes?.map((user) => (
+              <UserItem3
+                data={user}
+                key={user.id}
+                currentProfile={currentProfile}
+                handleFollow={handleFollow}
+                setIsOpenRelationships={setIsOpenRelationships}
               />
             ))
           ) : (
@@ -58,6 +74,7 @@ export default function Relationships({
                 data={user}
                 key={user.id}
                 currentProfile={currentProfile}
+                setIsOpenRelationships={setIsOpenRelationships}
               />
             ))
           )}

@@ -25,11 +25,13 @@ export default function SuggestList() {
     <div className="suggest-list">
       <h2 className="title">Suggest Follow: </h2>
       <div className="suggest-list-container">
-        {data?.length > 0
-          ? data?.map((user) => (
-              <SuggestItem info={user} key={user.followedUserID} />
-            ))
-          : "Dont have any suggest"}
+        {data?.length > 0 ? (
+          data?.map((user) => (
+            <SuggestItem info={user} key={user.followedUserID} />
+          ))
+        ) : (
+          <p className="none">Dont have any suggest</p>
+        )}
       </div>
     </div>
   );

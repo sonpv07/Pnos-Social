@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import "./leftbar.scss";
-import { Link, Navigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import Friends from "../../assets/1.png";
 import Groups from "../../assets/2.png";
 import Market from "../../assets/3.png";
@@ -35,6 +35,8 @@ export default function LeftBar() {
       }),
   });
 
+  const navigate = useNavigate();
+
   return (
     <div className="leftbar">
       {isLoading ? (
@@ -52,7 +54,7 @@ export default function LeftBar() {
               </div>
             </Link>
 
-            <div className="item">
+            <div className="item" onClick={() => navigate("/friend")}>
               <img src={Friends} alt="" />
               <span>Friends</span>
             </div>

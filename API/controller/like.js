@@ -12,6 +12,17 @@ export const getLikes = (req, res) => {
   });
 };
 
+export const getLikeInfo = (req, res) => {
+  const query =
+    "SELECT u.id, CONCAT(u.firstName, ' ' , u.lastname) as name, u.avatar FROM likes as l JOIN users as u ON (u.id = l.likeUserID) " +
+    " WHERE l.likePostID = ?";
+
+  db.query(query, [req.query.postID], (err, data) => {
+    if (err) return res.status(500).json(err);
+    return res.status(200).json(data);
+  });
+};
+
 export const addLike = (req, res) => {
   const token = req.cookies.accessToken;
   if (!token) return res.status(401).json("Not logged in!");

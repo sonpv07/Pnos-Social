@@ -35,9 +35,6 @@ export default function Register() {
     }
   };
 
-  console.log(input);
-  console.log(err);
-
   return (
     <div className="register">
       <div className="card">
@@ -116,7 +113,7 @@ export default function Register() {
               <p>
                 Already Have Account?{" "}
                 <Link to="/login">
-                  <span>SIGN IN</span>
+                  <span>Sign In</span>
                 </Link>
               </p>
             </div>

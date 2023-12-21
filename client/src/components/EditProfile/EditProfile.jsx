@@ -19,7 +19,6 @@ import Select from "@mui/material/Select";
 
 export default function EditProfile({ setIsOpenEditProfile, userProfile }) {
   const { user, setUser } = useContext(AuthContext);
-  console.log(userProfile);
   const [cover, setCover] = useState(null);
   const [profile, setProfile] = useState(null);
   const [texts, setTexts] = useState({
@@ -32,7 +31,6 @@ export default function EditProfile({ setIsOpenEditProfile, userProfile }) {
   const [gender, setGender] = React.useState(userProfile.gender);
 
   const upload = async (file) => {
-    console.log(file);
     try {
       const formData = new FormData();
       formData.append("file", file);
@@ -43,12 +41,28 @@ export default function EditProfile({ setIsOpenEditProfile, userProfile }) {
     }
   };
 
-  const handleChange = (e) => {
-    setTexts((prev) => ({ ...prev, [e.target.name]: [e.target.value] }));
-    setGender(e.target.value);
+  const uploadMultiple = async (file) => {
+    try {
+      const formData = new FormData();
+      formData.append("files", file);
+      const res = await makeRequest.post("/uploadMultiple", formData);
+      return res.data;
+    } catch (err) {
+      console.log(err);
+    }
   };
 
-  console.log(gender);
+  const handleChange = (e) => {
+    setTexts((prev) => ({ ...prev, [e.target.name]: [e.target.value] }));
+  };
+
+  const { isLoading, error, data } = useQuery({
+    queryKey: ["postsID"],
+    queryFn: () =>
+      makeRequest.get("/posts/allPost").then((res) => {
+        return res.data;
+      }),
+  });
 
   const queryClient = useQueryClient();
 
@@ -72,8 +86,21 @@ export default function EditProfile({ setIsOpenEditProfile, userProfile }) {
     },
   });
 
+  const mutationPost = useMutation({
+    mutationFn: (newPost) => {
+      return makeRequest.post("/posts", newPost);
+    },
+    onSuccess: () => {
+      // Invalidate and refetch
+      queryClient.invalidateQueries();
+    },
+  });
+
   let coverUrl = userProfile.coverPic;
   let profileUrl = userProfile.avatar;
+
+  let coverURLMultiple = "";
+  let profileURLMultiple = "";
 
   const handleClick = async (e) => {
     e.preventDefault();
@@ -81,22 +108,49 @@ export default function EditProfile({ setIsOpenEditProfile, userProfile }) {
     coverUrl = cover ? await upload(cover) : userProfile.coverPic;
     profileUrl = profile ? await upload(profile) : userProfile.avatar;
 
+    coverURLMultiple = cover
+      ? await uploadMultiple(cover)
+      : userProfile.coverPic;
+    profileURLMultiple = profile
+      ? await uploadMultiple(profile)
+      : userProfile.avatar;
+
     mutation.mutate({
       ...texts,
       gender,
       coverPic: coverUrl,
       avatar: profileUrl,
     });
-    if (profile)
-      mutationActivites.mutate({ activityUserID: user.id, activityTypeID: 1 });
-    if (cover)
-      mutationActivites.mutate({ activityUserID: user.id, activityTypeID: 2 });
+    if (profile) {
+      mutationActivites.mutate({
+        activityUserID: user.id,
+        activityTypeID: 1,
+        activityPostID: data[0]?.id + 1,
+      });
+      mutationPost.mutate({
+        content: "",
+        image: profileURLMultiple,
+        postTypeID: 2,
+      });
+    }
+
+    if (cover) {
+      mutationActivites.mutate({
+        activityUserID: user.id,
+        activityTypeID: 2,
+        activityPostID: data[0]?.id + 1,
+      });
+      mutationPost.mutate({
+        content: "",
+        image: coverURLMultiple,
+        postTypeID: 3,
+      });
+    }
+
     setIsOpenEditProfile(false);
     setCover(null);
     setProfile(null);
   };
-
-  console.log(profile);
 
   return (
     <div className="edit-profile">
@@ -115,7 +169,7 @@ export default function EditProfile({ setIsOpenEditProfile, userProfile }) {
                   }
                   alt=""
                 />
-                <CloudUploadIcon className="icon" />
+                {!userProfile.coverPic && <CloudUploadIcon className="icon" />}
               </div>
             </label>
             <input
@@ -135,7 +189,7 @@ export default function EditProfile({ setIsOpenEditProfile, userProfile }) {
                   }
                   alt=""
                 />
-                <CloudUploadIcon className="icon" />
+                {!userProfile.avatar && <CloudUploadIcon className="icon" />}
               </div>
             </label>
             <input
@@ -186,10 +240,15 @@ export default function EditProfile({ setIsOpenEditProfile, userProfile }) {
               id="demo-select-small"
               value={gender}
               label="Gender"
-              onChange={handleChange}
+              onChange={(e) => setGender(e.target.value)}
+              className="select-gender"
             >
-              <MenuItem value={"Male"}>Male</MenuItem>
-              <MenuItem value={"Female"}>Female</MenuItem>
+              <MenuItem className="option" value={"Male"}>
+                Male
+              </MenuItem>
+              <MenuItem className="option" value={"Female"}>
+                Female
+              </MenuItem>
             </Select>
           </FormControl>
 

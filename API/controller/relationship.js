@@ -20,6 +20,25 @@ export const getRelationships = (req, res) => {
   });
 };
 
+export const getFriendList = (req, res) => {
+  const token = req.cookies.accessToken;
+
+  if (!token) return res.status(401).json("not logged in");
+
+  jwt.verify(token, "secretkey", (err, userInfo) => {
+    if (err) return res.status(403).json("Token is not valid");
+
+    const query =
+      "select id, avatar, CONCAT(firstName, ' ' , lastname) as name from users where id in (" +
+      "select followedUserID from relationships where followedUserID in ( " +
+      "select followerUserID from relationships where followedUserID = ? ) AND followerUserID = ?)";
+    db.query(query, [userInfo.id, userInfo.id], (err, data) => {
+      if (err) return res.status(500).json(err);
+      return res.status(200).json(data);
+    });
+  });
+};
+
 export const getFollower = (req, res) => {
   const token = req.cookies.accessToken;
 

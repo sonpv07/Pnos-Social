@@ -74,8 +74,6 @@ export default function CreateStory({ setOpenCreateStory }) {
     setOpenCreateStory(false);
   };
 
-  console.log(data);
-
   return (
     <div className="create-story">
       <form onSubmit={handleSubmit}>

@@ -131,6 +131,11 @@
           background-color: #f0544f;
         }
       }
+
+      .select-gender {
+        border: 1px solid themed("border");
+        color: themed("textColor");
+      }
     }
   }
 }

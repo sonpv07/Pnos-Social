@@ -9,6 +9,12 @@
     .post-only-container {
       width: 800px;
       margin: 0 auto;
+
+      h2 {
+        text-align: center;
+        color: themed("textColor");
+        font-weight: 500;
+      }
     }
   }
 }

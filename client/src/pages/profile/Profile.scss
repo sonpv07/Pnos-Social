@@ -17,6 +17,7 @@
       position: relative;
       height: 400px;
       width: 100%;
+      cursor: pointer;
 
       .cover {
         width: 100%;
@@ -45,21 +46,30 @@
       .first-row {
         display: flex;
         justify-content: right;
-        .avatar {
-          @include mobile {
-            width: 80px;
-            height: 80px;
-            top: 25px;
-            left: 50px;
+
+        .avatar-container {
+          cursor: pointer;
+          .avatar {
+            @include mobile {
+              width: 80px;
+              height: 80px;
+              top: 25px;
+              left: 50px;
+            }
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 100px;
+            transform: translate(-50%, -50%);
+            border: 3px solid lightgrey;
+
+            &:hover {
+              border-color: #0095f6;
+            }
           }
-          width: 180px;
-          height: 180px;
-          border-radius: 50%;
-          object-fit: cover;
-          position: absolute;
-          top: 0;
-          left: 100px;
-          transform: translate(-50%, -50%);
         }
 
         .follower {
@@ -138,6 +148,10 @@
           border-radius: 5px;
           font-weight: 500;
 
+          &:hover {
+            background-color: rgb(228, 222, 222);
+          }
+
           @include mobile {
             width: 60px;
             height: 30px;
@@ -154,6 +168,9 @@
           }
         }
       }
+    }
+    .nothing {
+      @include nothingYet;
     }
   }
 

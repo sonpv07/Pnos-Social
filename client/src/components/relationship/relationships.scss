@@ -38,6 +38,7 @@
         border-bottom: 1px solid themed("border");
         text-align: center;
         font-weight: 500;
+        color: themed("textColor");
       }
 
       .user-list {
@@ -53,15 +54,21 @@
           justify-content: space-between;
           align-items: center;
           .left {
+            cursor: pointer;
             display: flex;
             align-items: center;
             gap: 10px;
             img {
               @include avatar;
             }
+
+            p {
+              color: themed("textColor");
+            }
             span {
               display: block;
               font-size: 14px;
+              color: #56b2ef;
 
               &.follow-btn {
                 color: blue;
@@ -76,13 +83,15 @@
 
           .right {
             button {
-              height: 30px;
+              height: 32px;
               width: 100px;
-              background-color: themed("bgSoft");
+              background-color: #474747;
               border-radius: 5px;
               font-size: 15px;
               cursor: pointer;
               font-weight: 500;
+              color: white;
+              outline: none;
 
               &.follow-btn {
                 background-color: #0095f6;
@@ -92,7 +101,7 @@
                 }
               }
               &:hover {
-                background-color: rgb(212, 207, 207);
+                background-color: rgb(100, 99, 99);
               }
             }
           }
@@ -109,7 +118,7 @@
         width: 30px;
         height: 30px;
         cursor: pointer;
-        color: black;
+        color: themed("textColor");
         border-radius: 50%;
         font-size: 16px;
 

@@ -25,16 +25,25 @@ import {
 } from "@tanstack/react-query";
 
 import { makeRequest } from "../../axios.js";
-export default function EditPost({ post, setIsOpenEdit, setIsOpenOverlay }) {
+export default function EditPost({
+  post,
+  setIsOpenEdit,
+  setIsOpenOverlay,
+  postImages,
+}) {
   const { user } = useContext(AuthContext);
 
   const [openDialog, setOpenDialog] = useState(false);
 
   const [data, setData] = useState(post);
 
+  const [images, setImages] = useState(postImages);
+
   const [fileEdit, setFileEdit] = useState(null);
 
   const queryClient = useQueryClient();
+
+  const [currentImg, setCurrentImg] = useState(0);
 
   // Mutations
   const mutation = useMutation({
@@ -47,7 +56,27 @@ export default function EditPost({ post, setIsOpenEdit, setIsOpenOverlay }) {
     },
   });
 
-  console.log(data);
+  const mutationImages = useMutation({
+    mutationFn: (newPost) => {
+      return makeRequest.put("/posts/updateImages?postID=" + post.id, newPost);
+    },
+    onSuccess: () => {
+      // Invalidate and refetch
+      queryClient.invalidateQueries();
+    },
+  });
+
+  const handleImage = (direction) => {
+    let index = currentImg;
+
+    if (direction === "left") {
+      setCurrentImg(index - 1);
+    }
+
+    if (direction === "right") {
+      setCurrentImg(index + 1);
+    }
+  };
 
   const handleCloseDialog = () => {
     setOpenDialog(false);
@@ -59,28 +88,30 @@ export default function EditPost({ post, setIsOpenEdit, setIsOpenOverlay }) {
     setData((prev) => ({ ...prev, [e.target.name]: [e.target.value] }));
   };
 
-  const upload = async () => {
+  const uploadMultiple = async () => {
     try {
       const formData = new FormData();
-      formData.append("file", fileEdit);
-      const res = await makeRequest.post("/upload", formData);
+      for (const single_file of fileEdit) {
+        formData.append("files", single_file);
+      }
+      const res = await makeRequest.post("/uploadMultiple", formData);
       return res.data;
     } catch (err) {
       console.log(err);
     }
   };
 
-  let imgURL = data?.image;
+  let imgURL = postImages;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (fileEdit !== null) imgURL = await upload();
-    setData({ ...data, image: imgURL });
-    mutation.mutate({ content: data.content, image: imgURL });
-    setOpenDialog(true);
-  };
+    if (fileEdit !== null) imgURL = await uploadMultiple();
+    mutation.mutate({ content: data.content });
+    mutationImages.mutate({ image: imgURL });
 
-  console.log(fileEdit);
+    setIsOpenEdit(false);
+    setIsOpenOverlay(false);
+  };
 
   return (
     <div className="edit-post">
@@ -103,16 +134,86 @@ export default function EditPost({ post, setIsOpenEdit, setIsOpenOverlay }) {
               />
             </div>
           </div>
-          {data.image != null && data.image !== "" ? (
+          {images != null && images !== "" ? (
             <div className="img-place">
-              <img src={"/upload/" + data.image} alt="" />
-              <div id="close" onClick={() => setData({ ...data, image: null })}>
+              <div
+                style={
+                  currentImg === 0 ? { display: "none" } : { display: "flex" }
+                }
+                onClick={() => handleImage("left")}
+                className="button left"
+              >
+                {" "}
+                <i className="fa-solid fa-angle-left"></i>
+              </div>
+              <img src={"/upload/" + images[currentImg].url} alt="" />
+              <div id="close" onClick={() => setImages(null)}>
                 <i className="fa-solid fa-x"></i>
               </div>
+
+              <div
+                style={
+                  currentImg === postImages?.length - 1
+                    ? { display: "none" }
+                    : { display: "flex" }
+                }
+                onClick={() => handleImage("right")}
+                className="button right"
+              >
+                {" "}
+                <i className="fa-solid fa-angle-right"></i>
+              </div>
+              <div className="dots">
+                {postImages.map((data, index) => (
+                  <i
+                    style={
+                      index === currentImg
+                        ? { color: "#0095f6" }
+                        : { color: "white" }
+                    }
+                    key={index}
+                    className="fa-solid fa-circle"
+                  ></i>
+                ))}
+              </div>
             </div>
-          ) : fileEdit != null ? (
-            <div className="img-place">
-              <img src={URL.createObjectURL(fileEdit)} alt="" />
+          ) : fileEdit ? (
+            <div className="bottom-2">
+              {fileEdit.length > 4 ? (
+                <div className="img-container">
+                  {Array.from(fileEdit)
+                    .splice(0, 3)
+                    .map((item, index) => (
+                      <img src={URL.createObjectURL(item)} alt="" key={index} />
+                    ))}{" "}
+                  <div className="img-4" num-img={`+ ${fileEdit.length - 4}`}>
+                    <img src={URL.createObjectURL(fileEdit[4])} alt="" />{" "}
+                  </div>
+                </div>
+              ) : fileEdit.length === 1 ? (
+                <div
+                  className="img-container"
+                  style={{ gridTemplateColumns: "repeat(1, 1fr)" }}
+                >
+                  {Array.from(fileEdit).map((item, index) => (
+                    <img
+                      src={URL.createObjectURL(item)}
+                      alt=""
+                      key={index}
+                      style={{ height: "100%" }}
+                    />
+                  ))}
+                </div>
+              ) : fileEdit.length !== 1 && fileEdit.length !== 4 ? (
+                <div className="img-container">
+                  {Array.from(fileEdit).map((item, index) => (
+                    <img src={URL.createObjectURL(item)} alt="" key={index} F />
+                  ))}
+                </div>
+              ) : (
+                ""
+              )}
+
               <div id="close" onClick={() => setFileEdit(null)}>
                 <i className="fa-solid fa-x"></i>
               </div>
@@ -124,12 +225,13 @@ export default function EditPost({ post, setIsOpenEdit, setIsOpenOverlay }) {
           <div className="bottom">
             <div className="left">
               <input
+                multiple
                 type="file"
                 id="fileEdit"
                 style={{ display: "none" }}
                 onChange={(e) => {
-                  setFileEdit(e.target.files[0]);
-                  setData({ ...data, image: fileEdit });
+                  setFileEdit(e.target.files);
+                  setImages(fileEdit);
                 }}
               />
               <label htmlFor="fileEdit">

@@ -6,12 +6,14 @@ import reportWebVitals from "./reportWebVitals";
 import { DarkModeContextProvider } from "./context/DarkModeContext";
 import { AuthContextProvider } from "./context/authContext";
 import { BrowserRouter } from "react-router-dom";
+import ScrollToTop from "./ScrollToTop";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <BrowserRouter>
     <AuthContextProvider>
       <DarkModeContextProvider>
+        <ScrollToTop />
         <App />
       </DarkModeContextProvider>
     </AuthContextProvider>

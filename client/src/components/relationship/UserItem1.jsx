@@ -8,9 +8,16 @@ import {
 } from "@tanstack/react-query";
 import { makeRequest } from "../../axios";
 import { AuthContext } from "../../context/authContext";
+import { useNavigate } from "react-router-dom";
 
-export default function UserItem1({ data, currentProfile, fData }) {
+export default function UserItem1({
+  data,
+  currentProfile,
+  setIsOpenRelationships,
+}) {
   const queryClient = useQueryClient();
+
+  const navigate = useNavigate();
 
   const { user } = useContext(AuthContext);
 
@@ -80,35 +87,14 @@ export default function UserItem1({ data, currentProfile, fData }) {
     mutationFollow.mutate(userID);
   };
 
-  console.log(rData2);
-
-  return (
+  return data.followerUserID === user.id ? (
     <div className="user">
       <div className="left">
         <img src={`/upload/${data.avatar}`} alt="" />
         <p>{`${data.firstName} ${data.lastName}`}</p>
-
-        {data.id === user.id ? ( // check data include current user
-          <span>You</span>
-        ) : (
-          <span
-            className="follow-btn"
-            onClick={() => {
-              handleFollow(data.followerUserID);
-            }}
-            style={
-              user.id != currentProfile
-                ? { display: "none" }
-                : data.followerUserID === check
-                ? { display: "none" }
-                : { display: "block" }
-            }
-          >
-            Follow
-          </span>
-        )}
+        <span>You</span>
       </div>
-      <div className="right">
+      <div className="right" style={{ display: "none" }}>
         {currentProfile != user.id && check !== data.followerUserID ? (
           <button
             onClick={() => {
@@ -116,7 +102,48 @@ export default function UserItem1({ data, currentProfile, fData }) {
             }}
             className="follow-btn"
           >
-            Followed
+            Follow
+          </button>
+        ) : currentProfile != user.id && check === data.followerUserID ? (
+          <button
+            onClick={() => {
+              handleRemove(user.id);
+            }}
+          >
+            Unfollow
+          </button>
+        ) : (
+          <button
+            onClick={() => {
+              handleRemove(data.followerUserID);
+            }}
+          >
+            Remove
+          </button>
+        )}
+      </div>
+    </div>
+  ) : (
+    <div className="user">
+      <div
+        className="left"
+        onClick={() => {
+          navigate(`/profile/${data.followerUserID}`);
+          setIsOpenRelationships(false);
+        }}
+      >
+        <img src={`/upload/${data.avatar}`} alt="" />
+        <p>{`${data.firstName} ${data.lastName}`}</p>
+      </div>
+      <div className="right">
+        {currentProfile != user.id && check !== data.followerUserID ? (
+          <button
+            onClick={() => {
+              handleFollow(data.followerUserID);
+            }}
+            className="follow-btn"
+          >
+            Follow
           </button>
         ) : currentProfile != user.id && check === data.followerUserID ? (
           <button

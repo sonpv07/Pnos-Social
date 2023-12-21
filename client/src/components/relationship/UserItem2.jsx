@@ -8,9 +8,16 @@ import {
 } from "@tanstack/react-query";
 import { makeRequest } from "../../axios";
 import { AuthContext } from "../../context/authContext";
+import { useNavigate } from "react-router-dom";
 
-export default function UserItem2({ data, currentProfile, fData }) {
+export default function UserItem2({
+  data,
+  currentProfile,
+  setIsOpenRelationships,
+}) {
   const queryClient = useQueryClient();
+
+  const navigate = useNavigate();
 
   const { user } = useContext(AuthContext);
 
@@ -80,12 +87,51 @@ export default function UserItem2({ data, currentProfile, fData }) {
     mutationRemoveFollow.mutate();
   };
 
-  console.log(rData2?.map((user) => user.followedUserID));
-  console.log(check);
-
-  return (
+  return data.followedUserID === user.id ? (
     <div className="user">
       <div className="left">
+        <img src={`/upload/${data.avatar}`} alt="" />
+        <p>{`${data.firstName} ${data.lastName}`}</p>
+        <span>You</span>
+      </div>
+      <div className="right" style={{ display: "none" }}>
+        {currentProfile != user.id && check !== data.followedUserID ? (
+          <button
+            onClick={() => {
+              handleFollow(user.id);
+            }}
+            className="follow-btn"
+          >
+            Followed
+          </button>
+        ) : currentProfile != user.id && check === data.followedUserID ? (
+          <button
+            onClick={() => {
+              handleRemove(user.id);
+            }}
+          >
+            Unfollow
+          </button>
+        ) : (
+          <button
+            onClick={() => {
+              handleRemove(data.followerUserID);
+            }}
+          >
+            Unfollow
+          </button>
+        )}
+      </div>
+    </div>
+  ) : (
+    <div className="user">
+      <div
+        className="left"
+        onClick={() => {
+          navigate(`/profile/${data.followedUserID}`);
+          setIsOpenRelationships(false);
+        }}
+      >
         <img src={`/upload/${data.avatar}`} alt="" />
         <p>{`${data.firstName} ${data.lastName}`}</p>
       </div>
@@ -97,7 +143,7 @@ export default function UserItem2({ data, currentProfile, fData }) {
             }}
             className="follow-btn"
           >
-            Followed
+            Follow
           </button>
         ) : currentProfile != user.id && check === data.followedUserID ? (
           <button

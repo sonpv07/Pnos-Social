@@ -48,9 +48,9 @@
 
     .upload-story {
       @include mobile {
-        width: 180px;
-        height: 100%;
         flex: none;
+        width: 140px;
+        height: 100%;
       }
       width: 180px;
       cursor: pointer;

@@ -25,6 +25,11 @@
       display: flex;
       flex-direction: column;
       gap: 20px;
+      padding-bottom: 0;
+
+      p.none {
+        color: themed("textColor");
+      }
       .item {
         background-color: themed("bg");
         padding: 10px;
@@ -43,6 +48,8 @@
           display: flex;
           justify-content: space-between;
           border-bottom: 1px solid themed("border");
+          font-weight: 500;
+          padding-left: 5px;
 
           p {
             margin: 0;
@@ -59,7 +66,7 @@
         .user {
           display: flex;
           align-items: center;
-          margin-top: 20px;
+          margin-top: 10px;
           justify-content: space-between;
           .userInfo {
             display: flex;
@@ -84,13 +91,27 @@
             }
 
             .online {
-              width: 10px;
-              height: 10px;
+              width: 12px;
+              height: 12px;
               border-radius: 50%;
-              background-color: green;
+              background-color: white;
               position: absolute;
               top: 6px;
               left: 30px;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+
+              &::before {
+                content: "";
+                position: absolute;
+                top: 0px;
+                left: 1.5px;
+                width: 11px;
+                height: 11px;
+                border-radius: 50%;
+                background-color: green;
+              }
             }
           }
 
@@ -131,6 +152,31 @@
               }
             }
           }
+        }
+      }
+
+      .online-friends {
+        padding: 10px;
+        .user-container {
+          max-height: 374px;
+          overflow: scroll;
+
+          .user {
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 10px;
+
+            &:hover {
+              background-color: themed(bgSoft);
+            }
+          }
+        }
+
+        .nothing {
+          @include nothingYet;
+          font-size: 18px;
+          margin-top: 10px;
+          margin-bottom: 0;
         }
       }
     }

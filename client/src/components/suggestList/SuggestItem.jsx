@@ -9,10 +9,11 @@ import {
 } from "@tanstack/react-query";
 
 import { makeRequest } from "../../axios.js";
+import { useNavigate } from "react-router-dom";
 
 export default function SuggestItem({ info }) {
   const queryClient = useQueryClient();
-
+  const nav = useNavigate();
   const {
     isLoading: cLoading,
     error: cError,
@@ -49,7 +50,10 @@ export default function SuggestItem({ info }) {
   let length = cData?.length - 1;
 
   return (
-    <div className="suggest-item">
+    <div
+      className="suggest-item"
+      onClick={() => nav(`/profile/${info.followedUserID}`)}
+    >
       <img src={`/upload/${info?.avatar}`} alt="" />
       <div className="user-info">
         <p>{info?.name}</p>

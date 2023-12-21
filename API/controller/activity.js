@@ -17,14 +17,13 @@ export const getActivities = (req, res) => {
 
 export const addActivity = (req, res) => {
   const query =
-    "INSERT INTO activities (`activityUserID`, `activityTypeID`, `actionTime`, `activityPostID`, `activityStoryID`) VALUES (?)";
+    "INSERT INTO activities (`activityUserID`, `activityTypeID`, `actionTime`, `activityPostID`) VALUES (?)";
 
   const values = [
     req.body.activityUserID,
     req.body.activityTypeID,
     moment(Date.now()).format("YYYY/MM/DD HH:mm:ss"),
     req.body.activityPostID,
-    req.body.activityStoryID,
   ];
 
   db.query(query, [values], (err, data) => {
